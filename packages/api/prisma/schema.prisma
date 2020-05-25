@@ -1,0 +1,83 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Feedback {
+  date     String
+  id       Int      @default(autoincrement()) @id
+  text     String
+  training Int      @default(autoincrement())
+  type     Int
+  user     Int      @default(autoincrement())
+  User     User     @relation(fields: [id], references: [id])
+  Training Training @relation(fields: [id], references: [id])
+}
+
+model Format {
+  description String
+  id          Int        @default(autoincrement()) @id
+  Training    Training[]
+}
+
+model Materials {
+  id       Int      @default(autoincrement()) @id
+  link     String
+  training Int      @default(autoincrement())
+  Training Training @relation(fields: [id], references: [id])
+}
+
+model Organizer {
+  address  String
+  id       Int        @default(autoincrement()) @id
+  name     String
+  site     String
+  type     Int
+  Training Training[]
+}
+
+model Request {
+  date     String
+  id       Int      @default(autoincrement()) @id
+  training Int      @default(autoincrement())
+  user     Int      @default(autoincrement())
+  Training Training @relation(fields: [id], references: [id])
+  User     User     @relation(fields: [id], references: [id])
+}
+
+model TargetAudience {
+  description String
+  id          Int        @default(autoincrement()) @id
+  Training    Training[]
+}
+
+model Training {
+  audience       Int            @default(autoincrement())
+  description    String
+  end            String
+  format         Int            @default(autoincrement())
+  id             Int            @default(autoincrement()) @id
+  label          String
+  name           String
+  organizer      Int            @default(autoincrement())
+  site           String
+  start          String
+  Organizer      Organizer      @relation(fields: [id], references: [id])
+  TargetAudience TargetAudience @relation(fields: [id], references: [id])
+  Format         Format         @relation(fields: [id], references: [id])
+  Feedback       Feedback[]
+  Materials      Materials[]
+  Request        Request[]
+}
+
+model User {
+  fullname String
+  id       Int        @default(autoincrement()) @id
+  login    String
+  Feedback Feedback[]
+  Request  Request[]
+}
